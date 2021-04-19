@@ -1,0 +1,16 @@
+html {
+  font-family: "Roboto", sans-serif;
+}
+table {
+  border-spacing: 0;
+  border: 1px solid gainsboro;
+}
+td {
+  border: 1px solid gainsboro;
+  padding: 0.5rem;
+}
+.theaders {
+  background: lightgray;
+  font-weight: bold;
+  text-align: center;
+}
