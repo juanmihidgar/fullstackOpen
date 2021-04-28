@@ -13,6 +13,14 @@ export const Header = ({ title }) => {
   return <h1>{title}</h1>;
 };
 
+export const Part = ({ name, exercises }) => {
+  return <p>{`${name} ${exercises}`}</p>;
+};
+
+export const Total = ({ total }) => {
+  return <p style={{ fontWeight: "bold" }}>Total of {total} exercises</p>;
+};
+
 export const Content = ({ parts }) => {
   const total = parts.reduce((s, p) => s + p.exercises, 0);
   return (
@@ -25,12 +33,4 @@ export const Content = ({ parts }) => {
       <Total total={total} />
     </div>
   );
-};
-
-export const Part = ({ name, exercises }) => {
-  return <p>{`${name} ${exercises}`}</p>;
-};
-
-export const Total = ({ total }) => {
-  return <p style={{ fontWeight: "bold" }}>Total of {total} exercises</p>;
 };
