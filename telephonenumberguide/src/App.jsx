@@ -1,19 +1,20 @@
 import React from "react";
+import axios from "axios";
 import Modal from "./Modal";
 
 export const App = () => {
-  const [persons, setPersons] = React.useState([
-    { name: "Arto Hellas", number: "695421356" },
-    { name: "Bob Sponge", number: "541305345" },
-    { name: "Bob Dylan", number: "534153454" },
-    { name: "Calvin Klein", number: "654864423" },
-    { name: "Pablo Motos", number: "875464651" },
-  ]);
+  const [persons, setPersons] = React.useState([]);
   const [newName, setNewName] = React.useState("");
   const [findTerm, setFindTerm] = React.useState("");
   const [foundPerson, setFoundPerson] = React.useState(undefined);
   const [newNumber, setNewNumber] = React.useState("");
   const [modalText, setModalText] = React.useState(false);
+
+  React.useEffect(() => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then((response) => setPersons(response.data));
+  }, []);
 
   React.useEffect(() => {
     const findResult = persons.filter((person) =>
