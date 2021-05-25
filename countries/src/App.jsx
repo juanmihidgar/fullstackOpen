@@ -25,21 +25,9 @@ export const App = () => {
     }
   }, [countryName]);
 
-  return (
-    <>
-      <label htmlFor="name-filter">Filter by name</label>
-      <input
-        type="text"
-        name="name-filter"
-        id="name-filter"
-        value={countryName}
-        onChange={(event) => {
-          setCountryName(event.target.value);
-        }}
-      />
-      {countries.length >= maxCountries ? (
-        <p>{maxCountriesMessage}</p>
-      ) : countries.length === 1 ? (
+  const handleCountries = () => {
+    if (countries.length === 1) {
+      return (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <h2>{countries[0].name}</h2>
           <span>Capital: {countries[0].capital}</span>
@@ -57,13 +45,33 @@ export const App = () => {
             alt="flag"
           />
         </div>
-      ) : (
+      );
+    } else if (countries.length < maxCountries) {
+      return (
         <ul>
           {countries.map((country) => (
             <li key={country.name}>{country.name}</li>
           ))}
         </ul>
-      )}
+      );
+    } else {
+      return <p>{maxCountriesMessage}</p>;
+    }
+  };
+
+  return (
+    <>
+      <label htmlFor="name-filter">Filter by name</label>
+      <input
+        type="text"
+        name="name-filter"
+        id="name-filter"
+        value={countryName}
+        onChange={(event) => {
+          setCountryName(event.target.value);
+        }}
+      />
+      {handleCountries()}
     </>
   );
 };
