@@ -5,6 +5,7 @@ import axios from "axios";
 export const App = () => {
   const [countryName, setCountryName] = React.useState("");
   const [countries, setCountries] = React.useState([]);
+  const [selectedCountry, setSelectedCountry] = React.useState();
 
   const url = "http://localhost:3001/countries";
 
@@ -50,7 +51,16 @@ export const App = () => {
       return (
         <ul>
           {countries.map((country) => (
-            <li key={country.name}>{country.name}</li>
+            <li key={country.name}>
+              {country.name}
+              <button
+                onClick={() => {
+                  setCountryName(country.name);
+                }}
+              >
+                show
+              </button>
+            </li>
           ))}
         </ul>
       );
