@@ -4,17 +4,15 @@ import axios from "axios";
 
 export const App = () => {
   const [countryName, setCountryName] = React.useState("");
-  const [countries, setCountries] = React.useState([]);
-  const [selectedCountry, setSelectedCountry] = React.useState();
-
-  const url = "http://localhost:3001/countries";
+  const [countries, setCountries] = React.useState(undefined);
+  const [countryWeather, setCountryWeather] = React.useState(undefined);
 
   const maxCountriesMessage = "Too many matches, specify another filter";
   const maxCountries = 10;
 
   React.useEffect(() => {
     if (countryName.length > 0) {
-      axios.get(url).then((response) => {
+      axios.get(process.env.REACT_APP_COUNTRIES_API_URL).then((response) => {
         setCountries(
           response.data.filter((country) =>
             country.name.toLowerCase().includes(countryName.toLowerCase())
@@ -26,8 +24,18 @@ export const App = () => {
     }
   }, [countryName]);
 
+  React.useEffect(() => {
+    if (countries && countries.length === 1) {
+      const wheatherUrl = `${process.env.REACT_APP_WEATHER_API_URL}?access_key=${process.env.REACT_APP_WEATHER_API_KEY}&query=${countries[0].name}`;
+
+      axios.get(wheatherUrl).then((response) => {
+        setCountryWeather(response.data);
+      });
+    }
+  }, [countries]);
+
   const handleCountries = () => {
-    if (countries.length === 1) {
+    if (countries && countries.length === 1) {
       return (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <h2>{countries[0].name}</h2>
@@ -45,9 +53,16 @@ export const App = () => {
             src={countries[0].flag}
             alt="flag"
           />
+          <span>Temperature: {countryWeather.current.temperature}</span>
+          <img
+            style={{ width: "3rem", height: "3rem", borderRadius: "3rem" }}
+            src={countryWeather.current.weather_icons}
+            alt="weather"
+          />
+          <span>{`Wind: ${countryWeather.current.wind_speed} mph direction ${countryWeather.current.wind_dir}`}</span>
         </div>
       );
-    } else if (countries.length < maxCountries) {
+    } else if (countries && countries.length < maxCountries) {
       return (
         <ul>
           {countries.map((country) => (
