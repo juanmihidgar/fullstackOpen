@@ -11,17 +11,25 @@ export const App = () => {
   const maxCountries = 10;
 
   React.useEffect(() => {
+    let timeout;
+
     if (countryName.length > 0) {
-      axios.get(process.env.REACT_APP_COUNTRIES_API_URL).then((response) => {
-        setCountries(
-          response.data.filter((country) =>
-            country.name.toLowerCase().includes(countryName.toLowerCase())
-          )
-        );
-      });
+      timeout = setTimeout(() => {
+        axios.get(process.env.REACT_APP_COUNTRIES_API_URL).then((response) => {
+          setCountries(
+            response.data.filter((country) =>
+              country.name.toLowerCase().includes(countryName.toLowerCase())
+            )
+          );
+        });
+      }, 350);
     } else {
       setCountries([]);
     }
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [countryName]);
 
   React.useEffect(() => {
@@ -29,13 +37,14 @@ export const App = () => {
       const wheatherUrl = `${process.env.REACT_APP_WEATHER_API_URL}?access_key=${process.env.REACT_APP_WEATHER_API_KEY}&query=${countries[0].name}`;
 
       axios.get(wheatherUrl).then((response) => {
+        console.log(response);
         setCountryWeather(response.data);
       });
     }
   }, [countries]);
 
   const handleCountries = () => {
-    if (countries && countries.length === 1) {
+    if (countries && countryWeather && countries.length === 1) {
       return (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <h2>{countries[0].name}</h2>
