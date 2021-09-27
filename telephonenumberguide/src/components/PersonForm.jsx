@@ -1,32 +1,18 @@
 import React from "react";
+import personsService from "../services/persons";
 
 export const PersonForm = ({
-  persons,
-  setPersons,
   newName,
   setNewName,
   newNumber,
   setNewNumber,
-  setModalText,
+  handleNewName
 }) => {
-  const handleNewName = (event) => {
-    event.preventDefault();
-    const findResult = persons.find((person) => newName === person.name);
-
-    if (findResult) {
-      setModalText(true);
-      setTimeout(() => {
-        setModalText(false);
-      }, 3000);
-    } else if (newName.length > 1) {
-      setPersons(persons.concat({ name: newName, number: newNumber }));
-    }
-  };
 
   return (
     <form onSubmit={handleNewName}>
       <div>
-        <label for="name">Name: </label>
+        <label htmlFor="name">Name: </label>
         <input
           id="name"
           value={newName}
@@ -35,7 +21,7 @@ export const PersonForm = ({
       </div>
 
       <div>
-        <label for="number">Number: </label>
+        <label htmlFor="number">Number: </label>
         <input
           id="number"
           type="number"
