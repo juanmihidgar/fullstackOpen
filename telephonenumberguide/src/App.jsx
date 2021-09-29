@@ -2,19 +2,23 @@ import React from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
-import Modal from "./Modal";
+import { Notification } from "./components/Notification";
 import personsService from "./services/persons";
 
 export const App = () => {
   const [persons, setPersons] = React.useState([]);
   const [newName, setNewName] = React.useState("");
+  const [notification, setNotification] = React.useState("");
+  const [notificationType, setNotificationType] = React.useState("");
   const [findTerm, setFindTerm] = React.useState("");
   const [foundPerson, setFoundPerson] = React.useState(undefined);
   const [newNumber, setNewNumber] = React.useState("");
-  const [modalText, setModalText] = React.useState(false);
 
   React.useEffect(() => {
-    personsService.getAll().then(response => setPersons(response), (reject) => console.error(reject.message));
+    personsService.getAll().then(
+      (response) => setPersons(response),
+      (reject) => console.error(reject.message)
+    );
   }, []);
 
   React.useEffect(() => {
@@ -31,48 +35,86 @@ export const App = () => {
     const findResult = persons.find((person) => newName === person.name);
 
     if (findResult) {
-      setModalText(true);
-      personsService.update(findResult.id, { ...findResult, number: newNumber }).then(response => {
-        setPersons(persons.map(person => {
-          if (person.id === findResult.id) {
-            person.number = newNumber
-          }
-          return person;
-        }));
-      });
+      setNotification(`${newName} is already updated to phonebook`);
+      setNotificationType("update");
+      // setModalText(true);
+      personsService
+        .update(findResult.id, { ...findResult, number: newNumber })
+        .then((response) => {
+          setPersons(
+            persons.map((person) => {
+              if (person.id === findResult.id) {
+                person.number = newNumber;
+              }
+              return person;
+            })
+          );
+        });
 
       setTimeout(() => {
-        setModalText(false);
+        setNotification("");
 
         setNewName("");
         setNewNumber("");
       }, 3000);
     } else if (newName.length > 1) {
-      personsService.create({ name: newName, number: newNumber }).then(
-        response => {
+      personsService
+        .create({ name: newName, number: newNumber })
+        .then((response) => {
+          setNotificationType("create");
+          setNotification(`${newName} is already created`);
+
           setPersons([...persons, response]);
           setNewName("");
           setNewNumber("");
-        }
-      )
+
+          setTimeout(() => {
+            setNotification("");
+          }, 3000);
+        });
     }
   };
 
   /* Persons handler */
   const peopleToShow = foundPerson ? foundPerson : persons;
-  
+
   const confirmDialog = (currentPerson) => () => {
-    if (window.confirm(`Do you really wants to delete to ${currentPerson.name}`)) {
-      personsService.deletePerson(currentPerson.id).then(response => {
-        setPersons(persons.filter(person => person.id !== currentPerson.id));
-      });
+    if (
+      window.confirm(`Do you really wants to delete to ${currentPerson.name}`)
+    ) {
+      personsService
+        .deletePerson(currentPerson.id)
+        .then((response) => {
+          setNotificationType("delete");
+
+          setNotification(`${currentPerson.name} was deleted`);
+
+          setTimeout(() => {
+            setNotification("");
+          }, 3000);
+
+          setPersons(
+            persons.filter((person) => person.id !== currentPerson.id)
+          );
+        })
+        .catch((error) => {
+          setNotificationType("error");
+
+          setNotification(
+            `User ${currentPerson.name} was already removed from server`
+          );
+
+          setTimeout(() => {
+            setNotification("");
+          }, 3000);
+        });
     }
-  }
+  };
   return (
     <>
       <div>debug: {newName}</div>
-      {modalText && (
-        <Modal text={`${newName} is already updated to phonebook`} />
+      {notification && (
+        <Notification text={notification} type={notificationType} />
       )}
       <div>
         <h2>Phonebook</h2>

@@ -1,0 +1,30 @@
+.notification {
+  padding: 20px;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 1;
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  background-color: lightgoldenrodyellow;
+}
+
+.update {
+  border: 1px solid orange;
+  color: orange;
+}
+
+.create {
+  border: 1px solid green;
+  color: green;
+}
+
+.delete {
+  border: 1px solid purple;
+  color: purple;
+}
+
+.error {
+  border: 1px solid red;
+  color: red;
+}
